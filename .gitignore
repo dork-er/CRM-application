@@ -56,3 +56,8 @@ backend/npm-debug.log
 backend/yarn-error.log
 backend/.env
 
+# Backend uploads
+backend/uploads
+
+# Personal
+notes.md
