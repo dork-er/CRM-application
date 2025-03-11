@@ -7,34 +7,34 @@ The primary goal of this CRM app is to enhance communication between customers a
 
 ## 📌 Project Overview
 
-This project is a Customer Relationship Management (CRM) application designed for a Water Distribution Company to enhance communication between customers and the service provider. It allows users to report issues (such as leaks, faulty meters, and water shortages), track their water usage, submit meter readings, receive billing updates, and get real-time notifications on reported issues.
+This project is a Customer Relationship Management (CRM) application designed for a Water Distribution Company to enhance communication between customers and the service provider. It allows users to report issues (such as leaks, faulty meters, and water shortages), track their water usage, submit meter readings, receive billing updates, and get real-time notifications on reported issues.<br>
 The application aims to **digitize** and **streamline** customer interactions, eliminating the need for in-person visits while providing a user-friendly mobile experience.
 
 ## 🎯 Key Objectives
 
-- Enable customers to report water-related issues with images and geolocation for faster resolution.
-- Allow customers to submit meter readings and view estimated water consumption.
-- Digitize billing and payments with automated notifications for upcoming bills.
-- Provide real-time updates on reported issues, scheduled maintenance, and service disruptions.
-- Improve communication efficiency between customers and company representatives.
-  Optimize customer support through ticket-based issue tracking and resolution.
+- Enable customers to report water-related issues with images and geolocation for faster resolution.<br>
+- Allow customers to submit meter readings and view estimated water consumption.<br>
+- Digitize billing and payments with automated notifications for upcoming bills.<br>
+- Provide real-time updates on reported issues, scheduled maintenance, and service disruptions.<br>
+- Improve communication efficiency between customers and company representatives.<br>
+- Optimize customer support through ticket-based issue tracking and resolution.<br>
 
 ## ✨ Features
 
 ### 🛠️ Core Features
 
-✅ **Issue Reporting**: Customers can submit complaints (e.g., water leaks, meter issues) with descriptions, images, and geo-location.
-✅ **Meter Reading Submission**: Users can manually enter their meter readings to estimate usage.
-✅ **Billing & Payment Tracking**: View current and past bills, receive payment reminders, and track outstanding balances.
-✅ **Notifications**: Get alerts on water supply disruptions, resolved complaints, and bill due dates.
-✅ **Issue Tracking**: Customers can track the status of reported problems in real-time.
-✅ **User Profile Management**: Edit personal details, update contact information, and manage account settings.
+✅ **Issue Reporting**: Customers can submit complaints (e.g., water leaks, meter issues) with descriptions, images, and geo-location.<br>
+✅ **Meter Reading Submission**: Users can manually enter their meter readings to estimate usage.<br>
+✅ **Billing & Payment Tracking**: View current and past bills, receive payment reminders, and track outstanding balances.<br>
+✅ **Notifications**: Get alerts on water supply disruptions, resolved complaints, and bill due dates.<br>
+✅ **Issue Tracking**: Customers can track the status of reported problems in real-time.<br>
+✅ **User Profile Management**: Edit personal details, update contact information, and manage account settings.<br>
 
 ### 🔜 Future Enhancements
 
-🔹 **Chatbot Integration**: AI-powered assistance for answering FAQs.
-🔹 **Automated Usage Insights**: AI-driven predictions on future water consumption based on past usage.
-🔹 **Feedback & Surveys**: Collect customer feedback to improve service quality.
+🔹 **Chatbot Integration**: AI-powered assistance for answering FAQs.<br>
+🔹 **Automated Usage Insights**: AI-driven predictions on future water consumption based on past usage.<br>
+🔹 **Feedback & Surveys**: Collect customer feedback to improve service quality.<br>
 
 ---
 
@@ -42,24 +42,24 @@ The application aims to **digitize** and **streamline** customer interactions, e
 
 ### 📱 Mobile App (Frontend) – Flutter
 
-**Language**: Dart
-**State Management**: Riverpod / Provider / Bloc (TBD)
-**Networking**: Dio / HTTP
-**Local Storage**: Hive / Shared Preferences
-**UI Design**: Material UI
+**Language**: Dart<br>
+**State Management**: Riverpod / Provider / Bloc (TBD)<br>
+**Networking**: Dio / HTTP<br>
+**Local Storage**: Hive / Shared Preferences<br>
+**UI Design**: Material UI<br>
 
 ### 🖥️ Backend – Node.js + Express
 
-**Framework**: Express.js
-**Database**: MongoDB (with Mongoose ORM)
-**Authentication**: JWT (JSON Web Tokens)
-**Storage**: Cloudinary / MongoDB (for image uploads)
-**Geolocation**: Google Maps API for geo-tagging issues
+**Framework**: Express.js<br>
+**Database**: MongoDB (with Mongoose ORM)<br>
+**Authentication**: JWT (JSON Web Tokens)<br>
+**Storage**: Cloudinary / MongoDB (for image uploads)<br>
+**Geolocation**: Google Maps API for geo-tagging issues<br>
 
 ### 🔧 Deployment
 
-**Version Control**: Git & GitHub
-**Deployment**: Render / Railway / Vercel (Backend)
+**Version Control**: Git & GitHub<br>
+**Deployment**: Render / Railway / Vercel (Backend)<br>
 
 ---
 
