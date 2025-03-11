@@ -1,98 +1,134 @@
-const User = require('../models/User');
-const Application = require('../models/Application');
-const bcrypt = require('bcrypt');
+// Importing modules.
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// User registration (After application approval)
-exports.registerUser = async (req, res) => {
-  try {
-    const { idNumber, password } = req.body;
+// Importing Models.
+const User = require('../models/User');
 
-    // Find application
-    const application = await Application.findOne({ idNumber });
-    if (!application) {
-      return res
-        .status(404)
-        .json({ message: 'Application not found or not approved' });
-    }
+// Generator functions for access and refresh tokens.
+const generateToken = (user) => {
+  const accessToken = jwt.sign(
+    { id: user._id },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: '15m' } // Short-lived access token (15 minutes)
+  );
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ idNumber });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already registered' });
-    }
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: '7d' } // Long-lived refresh token (7 days)
+  );
 
-    // Create new user using application details
-    const newUser = new User({
-      fullName: application.fullName,
-      idNumber: application.idNumber,
-      idAttachment: application.idAttachment,
-      contactAddress: application.contactAddress,
-      pinNumber: application.pinNumber,
-      pinAttachment: application.pinAttachment,
-      phoneNumber: application.phoneNumber,
-      email: application.email,
-      block: application.block,
-      roadStreet: application.roadStreet,
-      plotNumber: application.plotNumber,
-      ownerName: application.ownerName,
-      sizeRequired: application.sizeRequired,
-      dateRequired: application.dateRequired,
-      consumerCategory: application.consumerCategory,
-      sanitationMethod: application.sanitationMethod,
-      password, // Hashed automatically by the model
-    });
-
-    await newUser.save();
-    res
-      .status(201)
-      .json({ message: 'User registered successfully', user: newUser });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  return { accessToken, refreshToken };
 };
 
-// User login
-exports.loginUser = async (req, res) => {
+// User Login Controller.
+exports.login = async (req, res) => {
   try {
-    const { idNumber, password } = req.body;
+    const { identifier, password } = req.body; // Identifier can be email or phone number
 
-    // Find user
-    const user = await User.findOne({ idNumber });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Check if identifier and password are provided
+    if (!identifier || !password) {
+      return res
+        .status(400)
+        .json({ message: 'Both identifier and password are required.' });
     }
 
-    // Compare passwords
+    // Find user by email or phone number
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { phoneNumber: identifier }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Compare provided password with hashed password in DB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '7d',
-      }
-    );
 
-    res.status(200).json({ message: 'Login successful', token, user });
+    // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    //   expiresIn: '1d',
+    // });
+
+    const { accessToken, refreshToken } = generateToken(user);
+
+    // Return token and user data (excluding password)
+    res.status(200).json({
+      message: 'Login successful.',
+      accessToken,
+      refreshToken,
+      // user: {
+      //   id: user._id,
+      //   fullName: user.fullName,
+      //   email: user.email,
+      //   phoneNumber: user.phoneNumber,
+      // },
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Get user profile
-exports.getUserProfile = async (req, res) => {
+// Refresh Access Token Controller
+exports.refreshAccessToken = async (req, res) => {
   try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token required' });
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err) {
+          return res.status(403).json({ message: 'Invalid refresh token' });
+        }
+
+        const accessToken = jwt.sign(
+          { id: decoded.id },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: '15m',
+          }
+        );
+
+        res.status(200).json({ accessToken });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Logout (Handled on the client-side)
+exports.logout = async (req, res) => {
+  try {
+    // Simply return a success message (client should remove the token)
+    res.status(200).json({ message: 'Logout successful.' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get logged-in user's details
+exports.getMe = async (req, res) => {
+  try {
+    // Fetch the user from the database, excluding the password field
     const user = await User.findById(req.user.id).select('-password');
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

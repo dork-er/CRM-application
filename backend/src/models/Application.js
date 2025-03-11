@@ -16,8 +16,26 @@ const ApplicationSchema = new mongoose.Schema(
     ownerName: String,
     sizeRequired: String,
     dateRequired: Date,
-    consumerCategory: String,
-    sanitationMethod: { type: String, enum: ['M', 'P', 'N', 'U'] },
+    consumerCategory: {
+      type: String,
+      enum: [
+        'Domestic',
+        'Residential',
+        'Multi-Dwelling Units',
+        'Gated Communities',
+        'Commercial',
+        'Industrial',
+        'Government',
+        'Institutional',
+        'Water Kiosks',
+      ],
+      default: 'Domestic',
+    },
+    sanitationMethod: {
+      type: String,
+      enum: ['M', 'P', 'N', 'U'],
+      default: 'M',
+    },
     status: {
       type: String,
       enum: ['Pending', 'Approved', 'Rejected'],
