@@ -1,3 +1,5 @@
+// This middleware checks if the request has a valid token in the Authorization header. If the token is valid, it decodes the token and attaches the user data to the request object. The user data can then be accessed in the controller functions. If the token is invalid or missing, the middleware returns a 401 Unauthorized response.
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 

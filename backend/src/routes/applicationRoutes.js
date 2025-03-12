@@ -2,6 +2,9 @@
 // The routes are used to submit an application, get application status, approve an application and reject an application
 
 const express = require('express');
+const router = express.Router();
+
+// Importing controller functions
 const {
   submitApplication,
   getApplicationStatus,
@@ -17,7 +20,6 @@ const upload = require('../middleware/upload');
 // Importing authentication middleware to protect routes
 const authMiddleware = require('../middleware/authMiddleware');
 
-const router = express.Router();
 // USER ROUTES
 //
 // Route for submitting application with file uploads
