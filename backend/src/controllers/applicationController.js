@@ -85,8 +85,11 @@ exports.getApplicationStatus = async (req, res) => {
 // Approve application (Admin Only)
 exports.approveApplication = async (req, res) => {
   try {
-    console.log(`Application req: ${req}`);
-    console.log(`Application req params: ${req.params.id}`);
+    // console.log(`Application req: ${req}`);
+    // console.log(`Application req params: ${req.params.id}`);
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
 
     const { id } = req.params;
     const application = await Application.findById(id);
@@ -120,9 +123,7 @@ exports.approveApplication = async (req, res) => {
 
     await newUser.save();
 
-    res
-      .status(200)
-      .json({ message: 'Application approved, user created', user: newUser });
+    res.status(200).json({ message: 'Application approved, user created' });
   } catch (error) {
     console.error('Error approving application:', error.message);
     res.status(500).json({ error: error.message });
@@ -132,6 +133,10 @@ exports.approveApplication = async (req, res) => {
 // Reject application (Admin Only)
 exports.rejectApplication = async (req, res) => {
   try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     const { id } = req.params;
     const { reason, rejectedBy } = req.body; // Get reason from request body
 
@@ -174,20 +179,28 @@ exports.rejectApplication = async (req, res) => {
   }
 };
 
-// Get all applications
+// Get all applications (Admin Only)
 exports.getAllApplications = async (req, res) => {
   try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     const applications = await Application.find(); // Fetch all applications
-    console.log(applications);
+    // console.log(applications);
     res.status(200).json(applications);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Delete an application by ID
+// Delete an application by ID (Admin Only)
 exports.deleteApplication = async (req, res) => {
   try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     // Get application ID from request params
     const { id } = req.params;
     const application = await Application.findById(id);
@@ -210,9 +223,13 @@ exports.deleteApplication = async (req, res) => {
   }
 };
 
-// Get a single application by ID
+// Get a single application by ID (Admin Only)
 exports.getApplicationById = async (req, res) => {
   try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     const { id } = req.params;
     const application = await Application.findById(id);
 

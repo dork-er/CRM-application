@@ -14,8 +14,12 @@ const {
 } = require('../controllers/applicationController');
 const upload = require('../middleware/upload');
 
-const router = express.Router();
+// Importing authentication middleware to protect routes
+const authMiddleware = require('../middleware/authMiddleware');
 
+const router = express.Router();
+// USER ROUTES
+//
 // Route for submitting application with file uploads
 router.post(
   '/apply',
@@ -26,25 +30,27 @@ router.post(
   submitApplication
 );
 
-// Route to get application status by application ID (Admin only)
+// Route to get application status by application ID
 router.get('/status/:id', getApplicationStatus);
 
+// ADMIN ROUTES
+//
 // Route to approve an application (Admin only)
-router.patch('/approve/:id', approveApplication);
+router.patch('/approve/:id', authMiddleware, approveApplication);
 
 // Route to reject an application (Admin only)
-router.post('/reject/:id', rejectApplication);
-
-// Route to fetch an application by ID (Admin only)
-router.get('/:id', getApplicationById);
+router.post('/reject/:id', authMiddleware, rejectApplication);
 
 // Route to fetch all applications (Admin only)
-router.get('/all', getAllApplications);
+router.get('/all', authMiddleware, getAllApplications);
+
+// Route to fetch an application by ID (Admin only)
+router.get('/:id', authMiddleware, getApplicationById);
 
 // Route to update an application by ID (Admin only)
-router.patch('/update/:id', updateApplication);
+router.patch('/update/:id', authMiddleware, updateApplication);
 
 // Route to delete an application (Admin only)
-router.delete('/delete/:id', deleteApplication);
+router.delete('/delete/:id', authMiddleware, deleteApplication);
 
 module.exports = router;
