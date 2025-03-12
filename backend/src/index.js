@@ -9,6 +9,11 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+/*
+! REMINDER.
+- Reduce jwt access token duration to 15 minutes.
+*/
+
 // Routes
 // User application route
 app.use('/api/applications', require('./routes/applicationRoutes'));
