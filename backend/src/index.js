@@ -12,9 +12,11 @@ app.use(express.json());
 /*
 ! REMINDER.
 - Reduce jwt access token duration to 15 minutes.
+- Add real-time notifications.
 */
 
-// Routes
+// ROUTES
+
 // User application route
 app.use('/api/applications', require('./routes/applicationRoutes'));
 
@@ -26,6 +28,9 @@ app.use('/api/users', require('./routes/userRoutes'));
 
 // Reports route
 app.use('/api/reports', require('./routes/reportRoutes'));
+
+// Report response route
+app.use('/api/response', require('./routes/reportResponseRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

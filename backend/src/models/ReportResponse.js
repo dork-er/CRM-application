@@ -13,6 +13,18 @@ const ReportResponseSchema = new mongoose.Schema({
   }, // Who responded?
   message: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
+  lastEdited: { type: Date }, // Track last edit time
+  userFeedback: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      comment: { type: String, required: true },
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 module.exports = mongoose.model('ReportResponse', ReportResponseSchema);
