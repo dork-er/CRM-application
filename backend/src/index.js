@@ -12,7 +12,16 @@ app.use(express.json());
 /*
 ! REMINDER.
 - Reduce jwt access token duration to 15 minutes.
+- Implement refresh tokens.
+- Implement pagination features
 - Add real-time notifications.
+- Implement search features
+- Implement sorting features
+- Implement filtering features
+- Implement user roles.
+- Implement user permissions.
+- Implement user settings.
+- Implement users activity log.
 */
 
 // ROUTES
