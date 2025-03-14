@@ -21,7 +21,12 @@ const ReportSchema = new mongoose.Schema({
   },
   attachments: [{ type: String }], // Stores file paths or URLs
   createdAt: { type: Date, default: Date.now },
-
+  // Admin assigned to the report
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // This should be an admin
+    default: null,
+  },
   // Reopen request fields
   reopenRequest: {
     status: {

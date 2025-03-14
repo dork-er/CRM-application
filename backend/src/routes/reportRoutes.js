@@ -11,7 +11,9 @@ const {
   requestReportReopen,
   approveReopenRequest,
   searchReports,
+  exportReports,
 } = require('../controllers/reportController');
+const { assignReport } = require('../controllers/assignReport');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
@@ -26,6 +28,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 //  - Filter reports.
 // - Get reports based on the user's location.
 //- Update report status.
+? Make sure that you can't reassign a report that is already assigned to another admin and that you can't assign to the same admin again.
 
 */
 
@@ -52,6 +55,9 @@ router.post('/reopen-request/:id', authMiddleware, requestReportReopen);
 //
 // Search reports
 router.get('/search', authMiddleware, searchReports);
+
+// Download a report
+router.get('/export', authMiddleware, exportReports);
 
 // ADMIN ROUTES
 //
@@ -81,6 +87,14 @@ router.put(
   authMiddleware,
   adminMiddleware,
   approveReopenRequest
+);
+
+// Route to assign a report to another admin
+router.patch(
+  '/:reportId/assign',
+  authMiddleware,
+  adminMiddleware,
+  assignReport
 );
 
 module.exports = router;

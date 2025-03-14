@@ -1,4 +1,9 @@
+// Importing Models and modules.
 const Report = require('../models/Report');
+const { Parser } = require('json2csv');
+const PDFDocument = require('pdfkit');
+// Importing logging helper function
+const logAction = require('../utils/logger');
 
 //? USER CONTROLLER FUNCTIONS
 //
@@ -163,6 +168,8 @@ exports.requestReportReopen = async (req, res) => {
 };
 
 // ? ADMIN & USER CONTROLLER FUNCTIONS
+//
+// Search reports (GET /api/reports/search?query=leak&status=Resolved&priority=High&startDate=2021-01-01&endDate=2021-12-31&page=1&limit=10)
 exports.searchReports = async (req, res) => {
   try {
     const {
@@ -207,6 +214,11 @@ exports.searchReports = async (req, res) => {
       filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
     }
 
+    // Filter by admin assigned reports.
+    if (req.user.role === 'admin' && req.query.assignedTo === 'me') {
+      filter.assignedTo = req.user.id; // Show only reports assigned to the admin
+    }
+
     // Pagination
     const skip = (page - 1) * limit;
     const reports = await Report.find(filter)
@@ -222,6 +234,72 @@ exports.searchReports = async (req, res) => {
       currentPage: parseInt(page),
       reports,
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Export reports as CSV or PDF (GET /api/reports/export?format=csv/pdf)
+exports.exportReports = async (req, res) => {
+  try {
+    const { format, status, startDate, endDate } = req.query;
+    const userId = req.user.id;
+    const isAdmin = req.user.role === 'admin';
+
+    let filter = isAdmin ? {} : { user: userId };
+
+    // Apply status filter if provided
+    if (status) {
+      filter.status = status;
+    }
+
+    // Apply date range filter if provided
+    if (startDate && endDate) {
+      filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    }
+
+    // Fetch filtered reports
+    const reports = await Report.find(filter);
+
+    if (!reports.length) {
+      return res
+        .status(404)
+        .json({ message: 'No reports found for the given filters.' });
+    }
+
+    if (format === 'csv') {
+      const fields = ['_id', 'title', 'description', 'status', 'createdAt'];
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(reports);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment('reports.csv');
+      return res.send(csv);
+    } else if (format === 'pdf') {
+      const doc = new PDFDocument();
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=reports.pdf');
+
+      doc.pipe(res);
+      doc.fontSize(16).text('Reports Export', { align: 'center' }).moveDown();
+
+      reports.forEach((report, index) => {
+        doc.fontSize(12).text(`Report ${index + 1}:`, { underline: true });
+        doc.text(`Title: ${report.title}`);
+        doc.text(`Description: ${report.description}`);
+        doc.text(`Status: ${report.status}`);
+        doc.text(
+          `Created At: ${new Date(report.createdAt).toLocaleDateString()}`
+        );
+        doc.moveDown();
+      });
+
+      doc.end();
+    } else {
+      return res
+        .status(400)
+        .json({ message: 'Invalid format. Use csv or pdf.' });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -321,6 +399,13 @@ exports.updateReportStatus = async (req, res) => {
       return res.status(400).json({ message: 'Invalid status value.' });
     }
 
+    // Find existing report to get old status
+    const existingReport = await Report.findById(id);
+    if (!existingReport) {
+      return res.status(404).json({ message: 'Report not found.' });
+    }
+
+    const oldStatus = existingReport.status;
     // Find and update the report
     const updatedReport = await Report.findByIdAndUpdate(
       id,
@@ -331,6 +416,12 @@ exports.updateReportStatus = async (req, res) => {
     if (!updatedReport) {
       return res.status(404).json({ message: 'Report not found.' });
     }
+
+    await logAction('Report Updated', req.user.id, {
+      reportId: updatedReport._id,
+      oldStatus: oldStatus,
+      newStatus: updatedReport.status,
+    });
 
     res.status(200).json({ message: 'Report status updated.', updatedReport });
   } catch (error) {

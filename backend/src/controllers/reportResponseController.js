@@ -97,11 +97,9 @@ exports.deleteUserFeedback = async (req, res) => {
     );
 
     if (feedbackIndex === -1) {
-      return res
-        .status(403)
-        .json({
-          message: "You haven't submitted any feedback for this response.",
-        });
+      return res.status(403).json({
+        message: "You haven't submitted any feedback for this response.",
+      });
     }
 
     // Remove the feedback
@@ -234,7 +232,15 @@ exports.adminRespondToReport = async (req, res) => {
     if (status) {
       report.status = status;
       await report.save();
+      updatedStatus = status;
     }
+
+    // Log action and return response
+    await logAction('Admin Responded to Report', req.user.id, {
+      reportId,
+      response: message,
+      status: updatedStatus,
+    });
 
     res.status(201).json({
       message: 'Admin response recorded successfully.',
