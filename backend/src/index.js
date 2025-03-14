@@ -42,5 +42,8 @@ app.use('/api/reports', require('./routes/reportRoutes'));
 // Report response route
 app.use('/api/response', require('./routes/reportResponseRoutes'));
 
+// Dashboard route
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

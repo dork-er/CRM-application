@@ -162,6 +162,71 @@ exports.requestReportReopen = async (req, res) => {
   }
 };
 
+// ? ADMIN & USER CONTROLLER FUNCTIONS
+exports.searchReports = async (req, res) => {
+  try {
+    const {
+      query,
+      status,
+      priority,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+    } = req.query;
+    const userId = req.user.id; // Extract user ID from token
+    const isAdmin = req.user.role === 'admin';
+
+    let filter = {};
+
+    // Restrict access based on role
+    if (!isAdmin) {
+      filter.user = userId; // Users can only search their own reports
+    }
+
+    // Text search on title or description
+    if (query) {
+      filter.$or = [
+        { title: { $regex: query, $options: 'i' } }, // Case-insensitive search
+        { description: { $regex: query, $options: 'i' } },
+      ];
+    }
+
+    // Filter by status
+    if (status) {
+      filter.status = status;
+    }
+
+    // Filter by priority
+    if (priority) {
+      filter.priority = priority;
+    }
+
+    // Filter by date range
+    if (startDate && endDate) {
+      filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    }
+
+    // Pagination
+    const skip = (page - 1) * limit;
+    const reports = await Report.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 }); // Latest reports first
+
+    const totalReports = await Report.countDocuments(filter);
+
+    res.json({
+      totalReports,
+      totalPages: Math.ceil(totalReports / limit),
+      currentPage: parseInt(page),
+      reports,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 //? ADMIN CONTROLLER FUNCTIONS
 //
 // Get all reports (GET /api/reports/all) (Admin Only)

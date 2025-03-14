@@ -10,6 +10,7 @@ const {
   filterUserReports,
   requestReportReopen,
   approveReopenRequest,
+  searchReports,
 } = require('../controllers/reportController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
@@ -46,6 +47,11 @@ router.get('/my-reports/filter', authMiddleware, filterUserReports);
 
 // Request to reopen a report
 router.post('/reopen-request/:id', authMiddleware, requestReportReopen);
+
+// USER AND ADMIN ROUTES
+//
+// Search reports
+router.get('/search', authMiddleware, searchReports);
 
 // ADMIN ROUTES
 //

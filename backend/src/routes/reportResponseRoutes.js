@@ -33,8 +33,6 @@ router.post('/:responseId/comment', authMiddleware, respondToResponse);
 // Route to get all responses for a report
 router.get('/responses/:reportId', authMiddleware, getResponsesForReport);
 
-router.get('/:responseId/feedback', authMiddleware, getFeedbackForReport);
-
 // Route to delete feedback on a response
 router.delete(
   '/:responseId/feedback/delete',
