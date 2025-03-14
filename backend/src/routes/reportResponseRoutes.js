@@ -4,6 +4,8 @@ const {
   adminRespondToReport,
   getResponsesForReport,
   editResponse,
+  deleteResponse,
+  deleteUserFeedback,
 } = require('../controllers/reportResponseController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
@@ -26,10 +28,19 @@ const router = express.Router();
 // ? USER ROUTES
 //
 // Route to add a comment to a response (user)
-router.post('/:responseId/respond', authMiddleware, respondToResponse);
+router.post('/:responseId/comment', authMiddleware, respondToResponse);
 
 // Route to get all responses for a report
-router.get('/:reportId/responses', authMiddleware, getResponsesForReport);
+router.get('/responses/:reportId', authMiddleware, getResponsesForReport);
+
+router.get('/:responseId/feedback', authMiddleware, getFeedbackForReport);
+
+// Route to delete feedback on a response
+router.delete(
+  '/:responseId/feedback/delete',
+  authMiddleware,
+  deleteUserFeedback
+);
 
 //? BOTH USER AND ADMIN ROUTES
 // Route to edit a response.
@@ -45,6 +56,14 @@ router.post(
   authMiddleware,
   adminMiddleware,
   adminRespondToReport
+);
+
+// Route to delete a response
+router.delete(
+  '/:responseId/delete',
+  authMiddleware,
+  adminMiddleware,
+  deleteResponse
 );
 
 module.exports = router;

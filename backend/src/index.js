@@ -11,6 +11,7 @@ app.use(express.json());
 
 /*
 ! REMINDER.
+? Implement file upload.
 - Reduce jwt access token duration to 15 minutes.
 - Implement refresh tokens.
 - Implement pagination features
