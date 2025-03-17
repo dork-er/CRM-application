@@ -1,0 +1,42 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Metro bundler cache
+.expo/
+.expo-shared/
+metro-cache/
+*.expo
+
+# iOS
+ios/
+*.xcworkspace
+*.xcodeproj
+Pods/
+Podfile.lock
+DerivedData/
+*.pbxproj
+*.xcassets
+
+# Android
+android/
+*.keystore
+.gradle/
+build/
+
+# React Native specific
+.DS_Store
+.env
+*.log
+index.android.bundle
+index.ios.bundle
+
+# VSCode settings
+.vscode/
+
+# Misc
+*.swp
+

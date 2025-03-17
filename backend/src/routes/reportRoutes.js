@@ -19,16 +19,11 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 
 /*
 ! REMINDER.
-- USER:
-// - Get past reports.
-//  - Filter reports.
--
-- ADMIN:
-//  - Get all reports.
-//  - Filter reports.
-// - Get reports based on the user's location.
-//- Update report status.
-? Make sure that you can't reassign a report that is already assigned to another admin and that you can't assign to the same admin again.
+- Make sure that you can't reassign a report that is already assigned to another admin and that you can't assign to the same admin again.
+EXPORT:
+- Sort reports before exporting
+- Allow selection of specific fields
+- Better formatting for PDF tables
 
 */
 
