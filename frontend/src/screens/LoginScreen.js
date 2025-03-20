@@ -21,6 +21,7 @@ const LoginScreen = ({ navigation }) => {
     Toast.show({
       type: type, // 'success' or 'error'
       text1: message,
+      text2: message,
       position: 'bottom',
       visibilityTime: 4000, // Display for 4 seconds
       bottomOffset: 50, // Adjust bottom offset
@@ -53,8 +54,13 @@ const LoginScreen = ({ navigation }) => {
         showToast('success', 'Login successful!');
         console.log(data.user); // Store user info in state/context if needed
         // Navigate to the next screen here
+        navigation.replace('Home');
       } else {
-        showToast('error', data.message || 'Invalid email or password.');
+        showToast({
+          type: 'error',
+          text1: 'Login Failed',
+          text2: 'Invalid email or password',
+        });
       }
     } catch (error) {
       setLoading(false);
