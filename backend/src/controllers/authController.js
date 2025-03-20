@@ -62,12 +62,12 @@ exports.login = async (req, res) => {
       message: 'Login successful.',
       accessToken,
       refreshToken,
-      // user: {
-      //   id: user._id,
-      //   fullName: user.fullName,
-      //   email: user.email,
-      //   phoneNumber: user.phoneNumber,
-      // },
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
